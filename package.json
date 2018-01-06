@@ -10,6 +10,7 @@
   "license": "ISC",
   "dependencies": {
     "claudia-bot-builder": "^3.0.0",
-    "huh": "^2.0.1"
+    "huh": "^2.0.1",
+    "sentence-tokenizer": "^1.0.0"
   }
 }
