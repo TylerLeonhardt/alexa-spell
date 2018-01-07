@@ -68,30 +68,27 @@ const api = botBuilder(
                 .keepSession()
                 .get()
         } else if (getIntentName(originalRequest.body) === 'NewQuestion'){
-			// return a JavaScript object to set advanced response params
-			// this prevents any packaging from bot builder and is just
-            // returned to Alexa as you specify
-            let question = getNextQuestion();
-
-            let text = "Okay. Here's the next sentence to fill in the blank! " +
+            return generateQuestion (aliceSentences).then(function (question) {
+                let text = "Okay. Here's the next sentence to fill in the blank! " +
                 question.sentence.replace("___", "blank") +
-                " Is it" +
-                ". A.. " + question.options[0] +
-                ". B.. " + question.options[1] +
-                ". C.. " + question.options[2] +
-                ". D.. " + question.options[3]
+                    " Is it" +
+                    ". A.. " + question.options[0] +
+                    ". B.. " + question.options[1] +
+                    ". C.. " + question.options[2] +
+                    ". D.. " + question.options[3]
 
-            let options = "A. " + question.options[0] +
-                "\nB. " + question.options[1] +
-                "\nC. " + question.options[2] +
-                "\nD. " + question.options[3]
+                let options = "A. " + question.options[0] +
+                    "\nB. " + question.options[1] +
+                    "\nC. " + question.options[2] +
+                    "\nD. " + question.options[3]
 
-            return new AlexaMessageBuilder()
-                .addText(text)
-                .addSimpleCard(question.sentence, options)
-                .addSessionAttribute('questionData', question)
-                .keepSession()
-                .get()
+                return Promise.resolve(new AlexaMessageBuilder()
+                    .addText(text)
+                    .addSimpleCard(question.sentence, options)
+                    .addSessionAttribute('questionData', question)
+                    .keepSession()
+                    .get())
+            })
         } else if (getIntentName(originalRequest.body) === 'GetAnswer'){
             let guess = originalRequest.body.request.intent.slots.answer.resolutions.resolutionsPerAuthority[0].values[0].value.id;
             let question = originalRequest.body.session.attributes.questionData;
@@ -102,26 +99,27 @@ const api = botBuilder(
 
             // YES -- because Alexa isn't matching the right slots
             if (parseInt(guess) == 4) {
-                let question = getNextQuestion();
+                return generateQuestion (aliceSentences).then(function (question) {
 
-                let text = "Okay, here you go: " + question.sentence.replace("___", "blank") +
-                    " Is it" +
-                    ". A.. " + question.options[0] +
-                    ". B.. " + question.options[1] +
-                    ". C.. " + question.options[2] +
-                    ". D.. " + question.options[3];
+                    let text = "Okay, here you go: " + question.sentence.replace("___", "blank") +
+                        " Is it" +
+                        ". A.. " + question.options[0] +
+                        ". B.. " + question.options[1] +
+                        ". C.. " + question.options[2] +
+                        ". D.. " + question.options[3];
 
-                let options = "A. " + question.options[0] +
-                    "\nB. " + question.options[1] +
-                    "\nC. " + question.options[2] +
-                    "\nD. " + question.options[3];
+                    let options = "A. " + question.options[0] +
+                        "\nB. " + question.options[1] +
+                        "\nC. " + question.options[2] +
+                        "\nD. " + question.options[3];
 
-                return new AlexaMessageBuilder()
-                    .addText(text)
-                    .addSimpleCard(question.sentence, options)
-                    .addSessionAttribute('questionData', question)
-                    .keepSession()
-                    .get();
+                    return new AlexaMessageBuilder()
+                        .addText(text)
+                        .addSimpleCard(question.sentence, options)
+                        .addSessionAttribute('questionData', question)
+                        .keepSession()
+                        .get();
+                });
             // NO
             } else if (parseInt(guess) == 5) {
                 return new AlexaMessageBuilder()
@@ -138,11 +136,11 @@ const api = botBuilder(
                     .keepSession()
                     .get()
             } else {
-                return new AlexaMessageBuilder()
+                return Promise.resolve(new AlexaMessageBuilder()
                     .addText("So close! Try again.")
                     .addSimpleCard(question.sentence, options)
                     .keepSession()
-                    .get()
+                    .get())
             }
         } else {
             return new AlexaMessageBuilder()
@@ -163,14 +161,6 @@ Helpers
 function getRandomInt (max) {
     return Math.floor(Math.random() * Math.floor(max));
 }
-
-function getNextQuestion () {
-    return {
-        sentence: "The cow jumped over the ___.",
-        options: [ "the", "moon", "boyish", "worry" ],
-        answer: 1
-    };
-};
 
 // Ex: var aliceSentences = generate(aliceBook);
 // Generate sentences
