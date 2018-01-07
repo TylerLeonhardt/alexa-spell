@@ -9,6 +9,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "alexa-message-builder": "^1.2.0",
     "claudia-bot-builder": "^3.0.0",
     "huh": "^2.0.1",
     "promise": "^8.0.1",
