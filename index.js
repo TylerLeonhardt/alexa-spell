@@ -188,7 +188,7 @@ function generateQuestion (sentenceList) {
 
         wordpos.getNouns(randSentence).then(function (nounList) {
             randWord = nounList[getRandomInt(nounList.length - 1)];
-            optionArr = randy.sample(self._nouns, 5);
+            optionArr = randy.sample(self._nouns, 3);
             optionArr.push(randWord);
             randy.shuffleInplace(optionArr)
             resolve({
