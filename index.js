@@ -93,6 +93,54 @@ const api = botBuilder(
                     .get())
             })
         } else if (getIntentName(originalRequest.body) === 'GetAnswer'){
+            let status = originalRequest.body.request.intent.slots.answer.resolutions.resolutionsPerAuthority[0].status.code;
+
+            // Check if the user responded with the actual word instead of A, B, C, D
+            if (status === "ER_SUCCESS_NO_MATCH") {
+                let guess = originalRequest.body.request.intent.slots.answer.value;
+                let question = originalRequest.body.session.attributes.questionData;
+
+                // Correct word guess, generate new question and ask it
+                if (question.options[question.answer].indexOf(guess) > -1) {
+                    return generateQuestion (aliceSentences).then(function (question) {
+                        let text = "Okay, let's keep going! Here's your next sentence! " + question.sentence.replace("___", "blank") +
+                            " Is it" +
+                            ". A.. " + question.options[0] +
+                            ". B.. " + question.options[1] +
+                            ". C.. " + question.options[2] +
+                            ". D.. " + question.options[3];
+    
+                        let options = "A. " + question.options[0] +
+                            "\nB. " + question.options[1] +
+                            "\nC. " + question.options[2] +
+                            "\nD. " + question.options[3];
+    
+                        let msg = congrats[Math.floor(Math.random() * congrats.length)];
+                        let img = animals[Math.floor(Math.random() * animals.length)];
+                        return new AlexaMessageBuilder()
+                            .addText(msg + " Want to do another one?")
+                            .addStandardCard(msg, "Want to do another one?", {
+                                smallImageUrl: img,
+                                largeImageUrl: img})
+                            .addSessionAttribute('questionData', question)
+                            .keepSession()
+                            .get()
+                    });
+                } else {
+                    let options = "A. " + question.options[0] +
+                            "\nB. " + question.options[1] +
+                            "\nC. " + question.options[2] +
+                            "\nD. " + question.options[3];
+                            
+                    return Promise.resolve(new AlexaMessageBuilder()
+                    .addText("So close! Try again.")
+                    .addSimpleCard(appTitle, question.sentence + "\n\n" + options)
+                    .keepSession()
+                    .get());
+                }
+            }
+
+            // Otherwise, they guessed a letter A, B, C, D
             let guess = originalRequest.body.request.intent.slots.answer.resolutions.resolutionsPerAuthority[0].values[0].value.id;
             let question = originalRequest.body.session.attributes.questionData;
             let options = "A. " + question.options[0] +
