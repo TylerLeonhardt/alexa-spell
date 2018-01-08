@@ -217,7 +217,7 @@ const api = botBuilder(
             }
         } else {
             return new AlexaMessageBuilder()
-                .addText("Welcome! To start please say 'let's start")
+                .addText("Welcome! To start please say 'let's start'")
                 .keepSession()
                 .get()
         }
