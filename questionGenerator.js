@@ -32,7 +32,13 @@ questionGenerator(sentences).then(function(response){
 
 function questionGenerator(sentenceList) {
     var randSentence = sentences[getRandomInt(sentenceList.length - 1)];
+    var wordCount = randSentence.split(' ').length;
     var randWord;
+
+    while (wordCount < 4 || wordCount > 10) {
+        randSentence = sentences[getRandomInt(sentenceList.length - 1)];
+        wordCount = randSentence.split(' ').length;
+    }
 
     return new Promise(function (resolve, reject) {
 

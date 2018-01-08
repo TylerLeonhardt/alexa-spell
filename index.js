@@ -208,7 +208,7 @@ const api = botBuilder(
             }
         } else {
             return new AlexaMessageBuilder()
-                .addText("Welcome! Ask me for a new question!")
+                .addText("Welcome! To start please say 'let's start")
                 .keepSession()
                 .get()
         }
@@ -236,7 +236,13 @@ function generate (book) {
 // Generate question
 function generateQuestion (sentenceList) {
     var randSentence = sentenceList[getRandomInt(sentenceList.length - 1)];
+    var wordCount = randSentence.split(' ').length;
     var randWord;
+
+    while (wordCount < 4 || wordCount > 10) {
+        randSentence = sentenceList[getRandomInt(sentenceList.length - 1)];
+        wordCount = randSentence.split(' ').length;
+    }
 
     return new Promise(function (resolve, reject) {
 
