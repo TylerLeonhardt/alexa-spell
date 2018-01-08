@@ -144,7 +144,7 @@ const api = botBuilder(
             }
         } else {
             return new AlexaMessageBuilder()
-                .addText("Welcome")
+                .addText("Welcome. To start please say 'let's start")
                 .keepSession()
                 .get()
         }
