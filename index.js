@@ -181,7 +181,7 @@ function generateQuestion (sentenceList) {
     var randWord;
 
     while (wordCount < 4 || wordCount > 10) {
-        randSentence = sentences[getRandomInt(sentenceList.length - 1)];
+        randSentence = sentenceList[getRandomInt(sentenceList.length - 1)];
         wordCount = randSentence.split(' ').length;
     }
 
