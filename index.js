@@ -68,6 +68,7 @@ const api = botBuilder(
                 .addText(text)
                 .addSimpleCard(appTitle, question.sentence + "\n\n" + options)
                 .addSessionAttribute('questionData', question)
+                .addSessionAttribute('quitting', false)
                 .keepSession()
                 .get()
         } else if (getIntentName(originalRequest.body) === 'NewQuestion'){
@@ -89,14 +90,17 @@ const api = botBuilder(
                     .addText(text)
                     .addSimpleCard(appTitle, question.sentence + "\n\n" + options)
                     .addSessionAttribute('questionData', question)
+                    .addSessionAttribute('quitting', false)
                     .keepSession()
                     .get())
             })
         } else if (getIntentName(originalRequest.body) === 'GetAnswer'){
             let status = originalRequest.body.request.intent.slots.answer.resolutions.resolutionsPerAuthority[0].status.code;
+            let quitting = originalRequest.body.session.attributes.quitting;
 
             // Check if the user responded with the actual word instead of A, B, C, D
-            if (status === "ER_SUCCESS_NO_MATCH") {
+            // Extra check if the answer is "No" so we don't quit the app
+            if (status === "ER_SUCCESS_NO_MATCH" || !quitting) {
                 let guess = originalRequest.body.request.intent.slots.answer.value;
                 let question = originalRequest.body.session.attributes.questionData;
 
@@ -123,6 +127,7 @@ const api = botBuilder(
                                 smallImageUrl: img,
                                 largeImageUrl: img})
                             .addSessionAttribute('questionData', question)
+                            .addSessionAttribute('quitting', true)
                             .keepSession()
                             .get()
                     });
@@ -135,6 +140,8 @@ const api = botBuilder(
                     return Promise.resolve(new AlexaMessageBuilder()
                     .addText("So close! Try again.")
                     .addSimpleCard(appTitle, question.sentence + "\n\n" + options)
+                    .addSessionAttribute('questionData', question)
+                    .addSessionAttribute('quitting', false)
                     .keepSession()
                     .get());
                 }
@@ -168,6 +175,7 @@ const api = botBuilder(
                         .addText(text)
                         .addSimpleCard(appTitle, question.sentence + "\n\n" + options)
                         .addSessionAttribute('questionData', question)
+                        .addSessionAttribute('quitting', false)
                         .keepSession()
                         .get();
                 });
@@ -186,12 +194,15 @@ const api = botBuilder(
                         smallImageUrl: img,
                         largeImageUrl: img})
                     .addSessionAttribute('questionData', question)
+                    .addSessionAttribute('quitting', false)
                     .keepSession()
                     .get()
             } else {
                 return Promise.resolve(new AlexaMessageBuilder()
                     .addText("So close! Try again.")
                     .addSimpleCard(appTitle, question.sentence + "\n\n" + options)
+                    .addSessionAttribute('quitting', false)
+                    .addSessionAttribute('questionData', question)
                     .keepSession()
                     .get())
             }
