@@ -190,9 +190,53 @@ const api = botBuilder(
                 });
             // NO
             } else if (parseInt(guess) == 5) {
-                return new AlexaMessageBuilder()
+                if (quitting) {
+                    return new AlexaMessageBuilder()
                     .addText("Come back to play soon!")
                     .get();
+                } else {
+                    // Correct word guess, generate new question and ask it
+                    if (question.options[question.answer].indexOf("no") > -1) {
+                        return generateQuestion (allSentences[Math.floor(Math.random() * allSentences.length)]).then(function (question) {
+                            let text = "Okay, let's keep going! Here's your next sentence! " + question.sentence.replace("___", "blank") +
+                                " .. Is it.. " +
+                                ". A.. " + question.options[0] +
+                                ". B.. " + question.options[1] +
+                                ". C.. " + question.options[2] +
+                                ". D.. " + question.options[3];
+        
+                            let options = "A. " + question.options[0] +
+                                "\nB. " + question.options[1] +
+                                "\nC. " + question.options[2] +
+                                "\nD. " + question.options[3];
+        
+                            let msg = congrats[Math.floor(Math.random() * congrats.length)];
+                            let img = animals[Math.floor(Math.random() * animals.length)];
+                            return new AlexaMessageBuilder()
+                                .addText(msg + " Want to do another one?")
+                                .addStandardCard(msg, "Want to do another one?", {
+                                    smallImageUrl: img,
+                                    largeImageUrl: img})
+                                .addSessionAttribute('questionData', question)
+                                .addSessionAttribute('quitting', true)
+                                .keepSession()
+                                .get()
+                        });
+                    } else {
+                        let options = "A. " + question.options[0] +
+                                "\nB. " + question.options[1] +
+                                "\nC. " + question.options[2] +
+                                "\nD. " + question.options[3];
+                                
+                        return Promise.resolve(new AlexaMessageBuilder()
+                        .addText("So close! Try again.")
+                        .addSimpleCard(appTitle, question.sentence + "\n\n" + options)
+                        .addSessionAttribute('questionData', question)
+                        .addSessionAttribute('quitting', false)
+                        .keepSession()
+                        .get());
+                    }
+                }
             // ACTUAL ANSWER
             } else if (question.answer == parseInt(guess)) {
                 let msg = congrats[Math.floor(Math.random() * congrats.length)];
@@ -203,7 +247,7 @@ const api = botBuilder(
                         smallImageUrl: img,
                         largeImageUrl: img})
                     .addSessionAttribute('questionData', question)
-                    .addSessionAttribute('quitting', false)
+                    .addSessionAttribute('quitting', true)
                     .keepSession()
                     .get()
             } else {
