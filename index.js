@@ -36,7 +36,7 @@ var allSentences = [peterRabbitSentences, myFathersDragonSentences, benjaminBunn
 // Phrases
 var congrats = ["You did it!", "You're so smart!", "Wow, look at you go!", "Genius!"];
 var animals = ["https://i.imgur.com/3ojUvZC.png", "https://cdn.pixabay.com/photo/2017/01/31/20/12/animal-2026944_1280.png", "https://i.imgur.com/3tk7OGN.png", "https://i2.wp.com/cdn.playbuzz.com/cdn/569f3ed2-2005-4d71-8aa4-877a23d27824/92dc9230-b713-4d11-81c0-da398ccdd062.png", "https://www.ookbeecomics.com/images/meme-18.png"];
-var appTitle = "Kid's Book Game";
+var appTitle = "Sentence Master";
 
 /*************************
 Bot
