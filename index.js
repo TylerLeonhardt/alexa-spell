@@ -81,7 +81,7 @@ const api = botBuilder(
             return generateQuestion (allSentences[Math.floor(Math.random() * allSentences.length)]).then(function (question) {
                 let text = "Let's keep going! Here's your next sentence! " +
                 question.sentence.replace("___", "blank") +
-                    " Is it" +
+                    " .. Is it.." +
                     ". A.. " + question.options[0] +
                     ". B.. " + question.options[1] +
                     ". C.. " + question.options[2] +
@@ -114,7 +114,7 @@ const api = botBuilder(
                 if (question.options[question.answer].indexOf(guess) > -1) {
                     return generateQuestion (allSentences[Math.floor(Math.random() * allSentences.length)]).then(function (question) {
                         let text = "Okay, let's keep going! Here's your next sentence! " + question.sentence.replace("___", "blank") +
-                            " Is it" +
+                            " .. Is it.. " +
                             ". A.. " + question.options[0] +
                             ". B.. " + question.options[1] +
                             ". C.. " + question.options[2] +
@@ -169,7 +169,7 @@ const api = botBuilder(
                 return generateQuestion (allSentences[Math.floor(Math.random() * allSentences.length)]).then(function (question) {
 
                     let text = "Okay, let's keep going! Here's your next sentence! " + question.sentence.replace("___", "blank") +
-                        " Is it" +
+                        " .. Is it.. " +
                         ". A.. " + question.options[0] +
                         ". B.. " + question.options[1] +
                         ". C.. " + question.options[2] +
