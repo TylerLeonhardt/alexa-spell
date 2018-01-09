@@ -3,7 +3,8 @@
 Setup
 *************************/
 
-var botBuilder = require('claudia-bot-builder'),
+// var botBuilder = require('claudia-bot-builder'),
+var alexaSkillKit = require('alexa-skill-kit'),
 AlexaMessageBuilder = require('alexa-message-builder'),
 getIntentName = function (alexaPayload) {
 'use strict';
@@ -42,9 +43,14 @@ var appTitle = "Sentence Master";
 Bot
 *************************/
 
-const api = botBuilder(
-	function (message, originalRequest) {
-		'use strict';
+exports.handler = function(event, context) {
+	alexaSkillKit(event, context, parsedMessage => {
+        'use strict';
+
+        let originalRequest = {
+            body: event
+        }
+
 		console.log(originalRequest.body);
 		if (getIntentName(originalRequest.body) === 'ExitApp'){
 			// return a JavaScript object to set advanced response params
@@ -265,11 +271,9 @@ const api = botBuilder(
                 .keepSession()
                 .get()
         }
-	},
-	{ platforms: ['alexa'] }
+	}
 );
-
-module.exports = api;
+}
 
 /*************************
 Helpers

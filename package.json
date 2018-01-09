@@ -1,5 +1,5 @@
 {
-  "name": "alexa-kids-fill",
+  "name": "alexa-kids-fill-test",
   "version": "0.1.0",
   "description": "",
   "main": "index.js",
@@ -10,6 +10,7 @@
   "license": "ISC",
   "dependencies": {
     "alexa-message-builder": "^1.2.0",
+    "alexa-skill-kit": "^1.0.0",
     "claudia-bot-builder": "^3.0.0",
     "huh": "^2.0.1",
     "promise": "^8.0.1",
