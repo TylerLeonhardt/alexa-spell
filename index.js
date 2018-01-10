@@ -43,6 +43,9 @@ var appTitle = "Sentence Master";
 Bot
 *************************/
 
+// const api = botBuilder(
+//     function (message, originalRequest) {
+//         'use strict';
 exports.handler = function(event, context) {
 	alexaSkillKit(event, context, parsedMessage => {
         'use strict';
@@ -52,18 +55,25 @@ exports.handler = function(event, context) {
         }
 
 		console.log(originalRequest.body);
-		if (getIntentName(originalRequest.body) === 'ExitApp'){
+		if (getIntentName(originalRequest.body) === 'ExitApp' || getIntentName(originalRequest.body) === 'AMAZON.StopIntent'){
 			// return a JavaScript object to set advanced response params
 			// this prevents any packaging from bot builder and is just
 			// returned to Alexa as you specify
 			return new AlexaMessageBuilder()
                 .addText("Thanks for playing! See you soon!")
                 .get();
+		} else if (getIntentName(originalRequest.body) === 'AMAZON.HelpIntent'){
+			// return a JavaScript object to set advanced response params
+			// this prevents any packaging from bot builder and is just
+			// returned to Alexa as you specify
+			return new AlexaMessageBuilder()
+                .addText("You can say 'what's my question' to hear your question. If you're ready to guess, you can say an answer A through D, or say the actual word.")
+                .keepSession()
+                .get();
 		} else if (getIntentName(originalRequest.body) === 'GetQuestion'){
-
-            let question = originalRequest.body.session.attributes.questionData;
-
-            let text = "Here's your sentence! " +
+            if (originalRequest.body.session && originalRequest.body.session.attributes && originalRequest.body.session.attributes.questionData) {
+                let question = originalRequest.body.session.attributes.questionData;
+                let text = "Here's your sentence! " +
                 question.sentence.replace("___", "blank") +
                 " Is it" +
                 ". A.. " + question.options[0] +
@@ -71,18 +81,42 @@ exports.handler = function(event, context) {
                 ". C.. " + question.options[2] +
                 ". D.. " + question.options[3]
 
-            let options = "A. " + question.options[0] +
-                "\nB. " + question.options[1] +
-                "\nC. " + question.options[2] +
-                "\nD. " + question.options[3]
+                let options = "A. " + question.options[0] +
+                    "\nB. " + question.options[1] +
+                    "\nC. " + question.options[2] +
+                    "\nD. " + question.options[3]
 
-            return new AlexaMessageBuilder()
-                .addText(text)
-                .addSimpleCard(appTitle, question.sentence + "\n\n" + options)
-                .addSessionAttribute('questionData', question)
-                .addSessionAttribute('quitting', false)
-                .keepSession()
-                .get()
+                return new AlexaMessageBuilder()
+                    .addText(text)
+                    .addSimpleCard(appTitle, question.sentence + "\n\n" + options)
+                    .addSessionAttribute('questionData', question)
+                    .addSessionAttribute('quitting', false)
+                    .keepSession()
+                    .get()
+            } else {
+                return generateQuestion (allSentences[Math.floor(Math.random() * allSentences.length)]).then(function (question) {
+                    let text = "Here's your next sentence! " +
+                    question.sentence.replace("___", "blank") +
+                        " .. Is it.." +
+                        ". A.. " + question.options[0] +
+                        ". B.. " + question.options[1] +
+                        ". C.. " + question.options[2] +
+                        ". D.. " + question.options[3]
+    
+                    let options = "A. " + question.options[0] +
+                        "\nB. " + question.options[1] +
+                        "\nC. " + question.options[2] +
+                        "\nD. " + question.options[3]
+    
+                    return Promise.resolve(new AlexaMessageBuilder()
+                        .addText(text)
+                        .addSimpleCard(appTitle, question.sentence + "\n\n" + options)
+                        .addSessionAttribute('questionData', question)
+                        .addSessionAttribute('quitting', false)
+                        .keepSession()
+                        .get())
+                })
+            }
         } else if (getIntentName(originalRequest.body) === 'NewQuestion'){
             return generateQuestion (allSentences[Math.floor(Math.random() * allSentences.length)]).then(function (question) {
                 let text = "Let's keep going! Here's your next sentence! " +
@@ -267,10 +301,12 @@ exports.handler = function(event, context) {
             }
         } else {
             return new AlexaMessageBuilder()
-                .addText("Welcome! To start please say 'let's start'")
+                .addText("Welcome to Sentence Master, a game about sentence structure! To hear your first question, you can say 'let's start'")
                 .keepSession()
                 .get()
         }
+    },
+    // { platforms: ['alexa'] }
 	}
 );
 }
